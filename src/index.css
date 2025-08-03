@@ -1,69 +1,54 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@plugin "daisyui" {
+  themes: everdark --default, everdark --prefersdark;
+}
+/** daisyUI theme generator
+  https://daisyui.com/theme-generator/
+*/
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+@plugin "daisyui/theme" {
+  name: "everdark";
+  default: true;
+  prefersdark: false;
+  color-scheme: "dark";
+  --color-base-100: #121212;
+  --color-base-200: #1a1a1a;
+  --color-base-300: #222222;
+  --color-base-content: oklch(87% 0.006 286.286);
+  --color-primary: #783380;
+  --color-primary-content: oklch(87% 0.006 286.286);
+  --color-secondary: #9c7aa0;
+  --color-secondary-content: oklch(87% 0.006 286.286);
+  --color-accent: #5e2d66;
+  --color-accent-content: oklch(87% 0.006 286.286);
+  --color-neutral: oklch(26% 0 0);
+  --color-neutral-content: oklch(87% 0.006 286.286);
+  --color-info: oklch(50% 0.134 242.749);
+  --color-info-content: oklch(87% 0.006 286.286);
+  --color-success: #783380;
+  --color-success-content: oklch(87% 0.006 286.286);
+  --color-warning: oklch(55% 0.135 66.442);
+  --color-warning-content: oklch(14% 0 0);
+  --color-error: oklch(44% 0.177 26.899);
+  --color-error-content: oklch(87% 0.006 286.286);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 0.5px;
+  --depth: 0;
+  --noise: 0;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
