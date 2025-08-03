@@ -20,7 +20,7 @@ const AppRoutes = () => {
         path="/test"
         element={
           views["testPage"] ? (
-            React.createElement(views["testPage"])
+            React.createElement(views["dashboardPage"])
           ) : (
             <PageNotFound />
           )

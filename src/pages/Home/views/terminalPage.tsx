@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function terminalPage() {
   const [history, setHistory] = useState<string[]>([
@@ -7,6 +8,7 @@ function terminalPage() {
   ]);
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -25,9 +27,13 @@ function terminalPage() {
           "Available commands:",
           "help - Show this help message",
           "clear - Clear the terminal",
+          "test - Go to /test route",
         ];
       case "clear":
         return "CLEAR";
+      case "test":
+        navigate("/test");
+        return [`Navigating to /test...`];
       case "":
         return [];
       default:
