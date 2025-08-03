@@ -1,48 +1,101 @@
-import "./index.css";
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+import { useState, useRef, useEffect } from "react";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [history, setHistory] = useState<string[]>([
+    "Welcome to the MCP terminal.",
+    "Type 'help' to get started.",
+  ]);
+  const [input, setInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  // Command handler function
+  const handleCommand = (cmd: string) => {
+    const command = cmd.trim().toLowerCase();
+    switch (command) {
+      case "help":
+        return [
+          "Available commands:",
+          "help - Show this help message",
+          "clear - Clear the terminal",
+        ];
+      case "clear":
+        return "CLEAR";
+      case "":
+        return [];
+      default:
+        return [`Unknown command: ${cmd}`];
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setHistory((prev) => {
+        const newHistory = [...prev, `$ ${input}`];
+        const result = handleCommand(input);
+        if (result === "CLEAR") {
+          return [];
+        } else if (Array.isArray(result)) {
+          return [...newHistory, ...result];
+        }
+        return newHistory;
+      });
+      setInput("");
+    }
+  };
 
   return (
-    <>
-      <div className="flex justify-center items-center gap-8 mt-8">
-        <a href="https://vite.dev" target="_blank" rel="noopener noreferrer">
-          <img
-            src="/vite.svg"
-            className="h-24 w-24 transition-transform hover:scale-110"
-            alt="Vite logo"
+    <div
+      style={{
+        background: "#181818",
+        color: "#d1d5db",
+        fontFamily: "monospace",
+        minHeight: "100vh",
+        padding: "1.5rem",
+      }}
+      onClick={() => inputRef.current?.focus()}
+    >
+      <div>
+        {history.map((line, idx) => (
+          <div key={idx}>
+            {line.startsWith("$") ? (
+              <>
+                <span style={{ color: "#22d3ee" }}>$</span>{" "}
+                <span>{line.slice(2)}</span>
+              </>
+            ) : (
+              <span>{line}</span>
+            )}
+          </div>
+        ))}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <span style={{ color: "#22d3ee" }}>$</span>&nbsp;
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={handleInput}
+            onKeyDown={handleKeyDown}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#d1d5db",
+              fontFamily: "monospace",
+              outline: "none",
+              fontSize: "1em",
+              width: "100%",
+            }}
+            autoFocus
           />
-        </a>
-        <a href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          <img
-            src={reactLogo}
-            className="h-24 w-24 transition-transform hover:scale-110"
-            alt="React logo"
-          />
-        </a>
+        </div>
       </div>
-      <h1 className="text-4xl font-bold text-center mt-8 text-primary">
-        Vite + React
-      </h1>
-      <div className="card bg-base-200 shadow-xl p-8 mt-8 mx-auto max-w-md flex flex-col items-center">
-        <button
-          className="btn btn-primary mb-4"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          count is {count}
-        </button>
-        <p className="text-base-content">
-          Edit{" "}
-          <code className="bg-base-300 px-1 rounded">{`src/App.tsx`}</code> and
-          save to test HMR
-        </p>
-      </div>
-      <p className="text-center text-secondary mt-6">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   );
 }
 

@@ -11,15 +11,20 @@
     "preview": "cross-env NODE_ENV=production node server"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/vite": "^4.1.11",
-    "daisyui": "^5.0.37",
+    "axios": "^1.11.0",
     "compression": "^1.8.0",
+    "daisyui": "^5.0.37",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "sirv": "^3.0.1"
+    "react-hot-toast": "^2.5.2",
+    "sirv": "^3.0.1",
+    "socket.io-client": "^4.8.1",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
