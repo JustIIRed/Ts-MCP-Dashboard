@@ -11,6 +11,7 @@ export const useTerminalStore = create<TerminalState & TerminalActions>(
     currentCommand: "",
     isExecuting: false,
     error: null,
+    commandHistory: [], // <-- add this line
 
     setCurrentCommand: (command) => set({ currentCommand: command }),
     appendHistory: (entry) =>
@@ -20,5 +21,11 @@ export const useTerminalStore = create<TerminalState & TerminalActions>(
     setExecuting: (executing) => set({ isExecuting: executing }),
     setError: (error) => set({ error }),
     clearHistory: () => set({ history: [] }),
+    pushCommandHistory: (command) =>
+      set((state) =>
+        command.trim() === ""
+          ? state
+          : { commandHistory: [...state.commandHistory, command] }
+      ),
   })
 );

@@ -17,6 +17,7 @@ interface TerminalState {
   currentCommand: string;
   isExecuting: boolean;
   error: string | null;
+  commandHistory: string[]; // <-- add this line
 }
 
 interface TerminalActions {
@@ -26,4 +27,5 @@ interface TerminalActions {
   setExecuting: (executing: boolean) => void;
   setError: (error: string | null) => void;
   clearHistory: () => void;
+  pushCommandHistory: (command: string) => void; // <-- add this line
 }

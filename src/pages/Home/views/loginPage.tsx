@@ -13,7 +13,7 @@ function loginPage() {
     loginGuest?.();
   };
   return (
-    <div className="h-screen grid lg:grid-cols-2 relative">
+    <div className="h-full grid lg:grid-cols-2 relative">
       {/* App version at absolute top left */}
       <span
         className="absolute"

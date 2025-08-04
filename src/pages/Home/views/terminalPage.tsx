@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTerminalStore } from "../../../store/Zust/useTerminalStore";
 
@@ -12,9 +12,12 @@ function terminalPage() {
   const setCurrentCommand = useTerminalStore((s) => s.setCurrentCommand);
   const appendHistory = useTerminalStore((s) => s.appendHistory);
   const clearHistory = useTerminalStore((s) => s.clearHistory);
+  const commandHistory = useTerminalStore((s) => s.commandHistory); // <-- add
+  const pushCommandHistory = useTerminalStore((s) => s.pushCommandHistory); // <-- add
 
   // Prevent duplicate welcome messages
   const hasWelcomed = useRef(false);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -75,6 +78,7 @@ function terminalPage() {
           output: `$ ${cmd}`,
           timestamp: new Date(),
         });
+        pushCommandHistory(cmd); // <-- add
       }
       const results = handleCommand(cmd);
       results.forEach((output) => {
@@ -86,6 +90,28 @@ function terminalPage() {
         });
       });
       setCurrentCommand("");
+      setHistoryIndex(null);
+    } else if (e.key === "ArrowUp") {
+      // Use commandHistory for navigation
+      const commands = commandHistory;
+      if (commands.length === 0) return;
+      let idx = historyIndex === null ? commands.length - 1 : historyIndex - 1;
+      if (idx < 0) idx = 0;
+      setCurrentCommand(commands[idx]);
+      setHistoryIndex(idx);
+      e.preventDefault();
+    } else if (e.key === "ArrowDown") {
+      const commands = commandHistory;
+      if (commands.length === 0) return;
+      let idx = historyIndex === null ? 0 : historyIndex + 1;
+      if (idx >= commands.length) {
+        setCurrentCommand("");
+        setHistoryIndex(null);
+      } else {
+        setCurrentCommand(commands[idx]);
+        setHistoryIndex(idx);
+      }
+      e.preventDefault();
     }
   };
 
@@ -95,7 +121,7 @@ function terminalPage() {
         background: "#181818",
         color: "#d1d5db",
         fontFamily: "monospace",
-        minHeight: "100vh",
+        height: "100%",
         padding: "1.5rem",
       }}
       onClick={() => inputRef.current?.focus()}
