@@ -1,21 +1,44 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTerminalStore } from "../../../store/Zust/useTerminalStore";
 
 function terminalPage() {
-  const [history, setHistory] = useState<string[]>([
-    "Welcome to the MCP terminal.",
-    "Type 'help' to get started.",
-  ]);
-  const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
+  // Zustand store hooks
+  const history = useTerminalStore((s) => s.history);
+  const currentCommand = useTerminalStore((s) => s.currentCommand);
+  const setCurrentCommand = useTerminalStore((s) => s.setCurrentCommand);
+  const appendHistory = useTerminalStore((s) => s.appendHistory);
+  const clearHistory = useTerminalStore((s) => s.clearHistory);
+
+  // Prevent duplicate welcome messages
+  const hasWelcomed = useRef(false);
+
   useEffect(() => {
     inputRef.current?.focus();
-  }, []);
+    // Only show welcome messages once per session
+    if (history.length === 0 && !hasWelcomed.current) {
+      appendHistory({
+        id: crypto.randomUUID(),
+        command: "",
+        output: "Welcome to the MCP terminal.",
+        timestamp: new Date(),
+      });
+      appendHistory({
+        id: crypto.randomUUID(),
+        command: "",
+        output: "Type 'help' to get started.",
+        timestamp: new Date(),
+      });
+      hasWelcomed.current = true;
+    }
+    // eslint-disable-next-line
+  }, [history.length]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+    setCurrentCommand(e.target.value);
   };
 
   // Command handler function
@@ -30,7 +53,8 @@ function terminalPage() {
           "test - Go to /test route",
         ];
       case "clear":
-        return "CLEAR";
+        clearHistory();
+        return [];
       case "test":
         navigate("/test");
         return [`Navigating to /test...`];
@@ -43,17 +67,25 @@ function terminalPage() {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setHistory((prev) => {
-        const newHistory = [...prev, `$ ${input}`];
-        const result = handleCommand(input);
-        if (result === "CLEAR") {
-          return [];
-        } else if (Array.isArray(result)) {
-          return [...newHistory, ...result];
-        }
-        return newHistory;
+      const cmd = currentCommand;
+      if (cmd.trim() !== "") {
+        appendHistory({
+          id: crypto.randomUUID(),
+          command: cmd,
+          output: `$ ${cmd}`,
+          timestamp: new Date(),
+        });
+      }
+      const results = handleCommand(cmd);
+      results.forEach((output) => {
+        appendHistory({
+          id: crypto.randomUUID(),
+          command: "",
+          output,
+          timestamp: new Date(),
+        });
       });
-      setInput("");
+      setCurrentCommand("");
     }
   };
 
@@ -69,15 +101,15 @@ function terminalPage() {
       onClick={() => inputRef.current?.focus()}
     >
       <div>
-        {history.map((line, idx) => (
-          <div key={idx}>
-            {line.startsWith("$") ? (
+        {history.map((entry) => (
+          <div key={entry.id}>
+            {entry.output.startsWith("$") ? (
               <>
                 <span style={{ color: "#22d3ee" }}>$</span>{" "}
-                <span>{line.slice(2)}</span>
+                <span>{entry.output.slice(2)}</span>
               </>
             ) : (
-              <span>{line}</span>
+              <span>{entry.output}</span>
             )}
           </div>
         ))}
@@ -85,7 +117,7 @@ function terminalPage() {
           <span style={{ color: "#22d3ee" }}>$</span>&nbsp;
           <input
             ref={inputRef}
-            value={input}
+            value={currentCommand}
             onChange={handleInput}
             onKeyDown={handleKeyDown}
             style={{

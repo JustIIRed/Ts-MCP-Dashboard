@@ -60,7 +60,7 @@ interface AuthStore {
   }>;
   verify: (code: string) => Promise<void>;
   login: (data: LoginFormData) => Promise<LoginResponse>;
-  loginGuest: (guestUser: AuthUser) => void;
+  loginGuest: () => void;
   addAuthenticator: () => Promise<addAuthenticatorResponse>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<AuthUser>) => Promise<void>;
